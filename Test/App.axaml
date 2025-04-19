@@ -1,0 +1,25 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="Test.App"
+             xmlns:local="using:Test"
+             xmlns:vm="clr-namespace:Test.ViewModels"
+             xmlns:views="clr-namespace:Test.Views"
+             xmlns:converters="using:Test.Converters"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <!--<Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>-->
+             
+             <Application.Resources>
+                 <ResourceDictionary>
+                     <converters:QuestionTypeToVisibilityConverter x:Key="QuestionTypeToVisibilityConverter"/>
+                 </ResourceDictionary>
+             </Application.Resources>
+             
+             
+    <Application.Styles>
+        <FluentTheme />
+    </Application.Styles>
+</Application>

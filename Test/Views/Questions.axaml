@@ -1,0 +1,167 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:Test.ViewModels"
+             xmlns:models="clr-namespace:Test.Models"
+             xmlns:converters="clr-namespace:Test.Converters"
+             xmlns:visualBasic="clr-namespace:Microsoft.VisualBasic;assembly=Microsoft.VisualBasic.Core"
+             x:DataType="vm:QuestionsViewModel"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Test.Views.Questions"
+             >
+    
+    
+    <Design.DataContext>
+        <vm:QuestionsViewModel/>
+    </Design.DataContext>
+     <UserControl.Resources>
+         <converters:QuestionTypeToVisibilityConverter x:Key="TypeToVisibility" />
+    </UserControl.Resources>
+    
+    <Grid  RowDefinitions="Auto,*,Auto" Margin="10">
+        
+        <StackPanel  Grid.Row="0" Orientation="Horizontal" Spacing="10">
+            
+            <Button Content="✓ Проверить ответы"
+                    Command="{Binding CheckAnswerCommand}"
+                    Padding="10,5"
+                    CornerRadius="5">
+                <Button.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                    </Transitions>
+                </Button.Transitions>
+            </Button>
+            
+            <Button Content="← Вернуться назад"
+                    Command="{Binding GoBackCommand}"
+                    Padding="10,5"
+                    CornerRadius="5">
+                <Button.Transitions>
+                    <Transitions>
+                        <DoubleTransition Property="Opacity" Duration="0:0:0.2"/>
+                    </Transitions>
+                </Button.Transitions>
+            </Button>
+        </StackPanel>
+        <ScrollViewer Grid.Row="1">
+         <ItemsControl Grid.Row="1" ItemsSource="{Binding QList}" Margin="0,10">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="#f5f5f5" 
+                            CornerRadius="8"
+                            Padding="15"
+                            Margin="0,5"
+                            BorderBrush="#e0e0e0"
+                            BorderThickness="1">
+                        <StackPanel Spacing="10">
+                            <!-- Текст вопроса -->
+                            <TextBlock Text="{Binding Text}" 
+                                       FontSize="16" 
+                                       FontWeight="SemiBold"
+                                       TextWrapping="Wrap"/>
+                            
+                            <!-- Варианты ответов -->
+                            <StackPanel Spacing="5" Margin="10,0,0,0">
+                                <!-- Single Choice (RadioButtons) -->
+                                <ItemsControl ItemsSource="{Binding Answers}" 
+                                              IsVisible="{Binding Type, Converter={StaticResource TypeToVisibility}, ConverterParameter=RadioButton}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <RadioButton Content="{Binding Text}" 
+                                                         GroupName="{Binding QuestionId}" 
+                                                         Command="{ReflectionBinding $parent[UserControl].DataContext.OnAnswerSelectedCommand1}"
+                                                         CommandParameter="{Binding}"
+                                                         Margin="0,5"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- Multiple Choice (CheckBoxes) -->
+                                <ItemsControl ItemsSource="{Binding Answers}" 
+                                              IsVisible="{Binding Type, Converter={StaticResource TypeToVisibility}, ConverterParameter=CheckBox}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Text}" 
+                                                      Command="{ReflectionBinding $parent[UserControl].DataContext.OnAnswerSelectedCommand2}"
+                                                      CommandParameter="{Binding}"
+                                                      Margin="0,5"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <!-- Text Answer -->
+                                <TextBox Text="{ReflectionBinding $parent[UserControl].DataContext.UserTextAnswer}"
+                                         IsVisible="{Binding Type, Converter={StaticResource TypeToVisibility}, ConverterParameter=TextAnswer}"
+                                         Watermark="Введите ваш ответ..."
+                                         Margin="0,5">
+                                    <Interaction.Behaviors>
+                                        <EventTriggerBehavior EventName="LostFocus">
+                                            <InvokeCommandAction Command="{ReflectionBinding $parent[UserControl].DataContext.OnAnswerSelectedCommand3}"
+                                                                 CommandParameter="{Binding Text}" />
+                                        </EventTriggerBehavior>
+                                    </Interaction.Behaviors>
+                                </TextBox>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+        </ScrollViewer>
+        
+        <!--<ItemsControl Grid.Row="1" ItemsSource="{Binding QList}" Margin="0,10">
+        <ItemsControl.ItemTemplate>
+            <DataTemplate>
+                <StackPanel Margin="10">
+                    ~1~ Текст вопроса @1@
+                    <TextBlock Text="{Binding Text}" FontSize="16" Margin="0 0 0 10" />
+
+                    ~1~ Single Choice (RadioButtons) @1@
+                    <ItemsControl ItemsSource="{Binding Answers}" 
+                                  IsVisible="{Binding Type,
+                                   Converter={StaticResource TypeToVisibility},
+                                    ConverterParameter=RadioButton}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <RadioButton Content="{Binding Text}" 
+                                             GroupName="{Binding QuestionId}" 
+                                             Command="{ReflectionBinding $parent[UserControl].DataContext.OnAnswerSelectedCommand1}"
+                                             CommandParameter="{Binding}"/>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    ~1~~3~ Multiple Choice (CheckBoxes) @3@@1@
+                    <ItemsControl ItemsSource="{Binding Answers}" 
+                                  IsVisible="{Binding Type,
+                                   Converter={StaticResource TypeToVisibility},
+                                    ConverterParameter=CheckBox}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <CheckBox Content="{Binding Text}" 
+                                          Command="{ReflectionBinding $parent[UserControl].DataContext.OnAnswerSelectedCommand2}"
+                                          CommandParameter="{Binding}" />
+                                ~1~~4~ IsChecked="{Binding IsSelected}"  @4@@1@
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    ~1~                    Text Answer @1@
+                    <TextBox Text="{ReflectionBinding $parent[UserControl].DataContext.UserTextAnswer}"
+                             IsVisible="{Binding Type, Converter={StaticResource TypeToVisibility}, ConverterParameter=TextAnswer}">
+                        <Interaction.Behaviors>
+                            <EventTriggerBehavior EventName="LostFocus">
+                                <InvokeCommandAction Command="{ReflectionBinding $parent[UserControl].DataContext.OnAnswerSelectedCommand3}"
+                                                        CommandParameter="{Binding Text}" />
+                            </EventTriggerBehavior>
+                        </Interaction.Behaviors>
+                    </TextBox> 
+                </StackPanel>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+    </ItemsControl>-->
+        </Grid>
+
+</UserControl>

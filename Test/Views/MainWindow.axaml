@@ -1,0 +1,45 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:Test.ViewModels" 
+        x:DataType="vm:MainWindowViewModel"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:views="clr-namespace:Test.Views"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Test.Views.MainWindow"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Test">
+
+    <!--<Design.DataContext>
+        ~1~ This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) @1@
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>-->
+    
+    <!--<DockPanel LastChildFill="True">
+        <TextBlock DockPanel.Dock="Top" 
+                   Text="{Binding CurrentViewModel.GetType().Name}"
+                   Background="LightBlue"/>
+        <ContentControl Content="{Binding CurrentViewModel}"/>
+    </DockPanel>-->
+   
+    <Window.DataTemplates>
+        <DataTemplate DataType="vm:TestsViewModel">
+            <views:Tests/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:QuestionsViewModel">
+            <views:Questions/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:AddTestViewModel">
+            <views:AddTest/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:AddQuestionsViewModel">
+            <views:AddQuestions/>
+        </DataTemplate>
+        <!-- Добавьте другие DataTemplate для ваших ViewModel -->
+    </Window.DataTemplates>
+    
+    <ContentControl  Content="{Binding CurrentViewModel}" />
+  
+
+</Window>
